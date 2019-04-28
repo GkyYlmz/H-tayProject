@@ -1,0 +1,144 @@
+﻿@using Hitay.UI.Models.Order
+@using Hitay.Common.Enums
+@model OrderCreateViewModel
+
+@Html.HiddenFor(a => a.Cream)
+@Html.HiddenFor(a => a.Milk)
+@Html.HiddenFor(a => a.SelectedSugarTypeId)
+
+    <div class="row col-md-10">
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">Sipariş Oluştur</div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <select class="form-control" name="SelectedCofeeTypeId" data-val="true">
+                            <option value="0">Seçiniz.</option>
+                            @foreach (var item in Model.CoffeeTypeList)
+                            {
+                                <option value="@item.Id">@item.Type</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        @Html.TextBoxFor(a => a.CustomerName, new { @class = "form-control", placeholder = "Müşteri Adı Soyadı" })
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="" id="CreamInput">Krema</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="" id="MilkInput">Süt</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" id="sugarCheckbox" onclick="GetSugarOption();">Şeker</label>
+                        </div>
+                        <div class="form-group radio" id="sugarOption">
+                            @foreach (var item in Model.SugarTypeList)
+                            {
+                                <label><input type="radio" name="sugar" value="@item.Id" onclick="SetSugarTypeId(@item.Id)">@item.Type</label>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button class="btn btn-info" type="submit" name="submit" value="Create" onclick="SetProp();"> Oluştur</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">Son 5 Sipariş</div>
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Müşteri Adı</th>
+                                <th>Kahve</th>
+                                <th>Krema</th>
+                                <th>Süt</th>
+                                <th>Şeker</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.OrderList.Any())
+                            {
+                                foreach (var order in Model.OrderList)
+                                {
+                                    <tr>
+                                        <td>@order.CustomerName</td>
+                                        <td>@order.CoffeeType</td>
+                                        <td>@order.Cream</td>
+                                        <td>@order.Milk</td>
+                                        <td>@order.SugarType</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="panel panel-info">
+                <div class="panel-heading">Hazırlanan</div>
+                <div class="panel-body">
+                    @if (Model != null && Model.OrderCount.Any() && Model.OrderCount.Any(a => a.StatusId == (int)OrderStatusEnum.Delivered))
+                    {
+                        <h1>@Model.OrderCount.FirstOrDefault(a => a.StatusId == (int)OrderStatusEnum.Delivered).Count</h1>
+                    }
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">Bekleyen</div>
+                <div class="panel-body">
+                    @if (Model != null && Model.OrderCount.Any() && Model.OrderCount.Any(a => a.StatusId == (int)OrderStatusEnum.Preparing))
+                    {
+                        <h1>@Model.OrderCount.FirstOrDefault(a => a.StatusId == (int)OrderStatusEnum.Preparing).Count</h1>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function SetSugarTypeId(val) {
+            $('#SelectedSugarTypeId').val(val);
+        }
+
+        function SetProp() {
+            var cream = $("#CreamInput").prop("checked");
+            var milk = $("#MilkInput").prop("checked");
+            if (cream) {
+                $('#Cream').val(1);
+            }
+            if (milk) {
+                $('#Milk').val(1);
+            }
+        }
+
+        $(function () {
+            $("#sugarOption").hide();
+
+            $('#sugarCheckbox').change(function () {
+                var isChecked = $(this).is(':checked');
+                if (isChecked)
+                    $("#sugarOption").show();
+                else
+                    $("#sugarOption").hide();
+            });
+        });
+
+        $(document).ready(function () {
+            debugger;
+            if ('@Model.ValidationMessage' != null && '@Model.ValidationMessage' != "") {
+                showMessage('@Model.ValidationMessage', '@Model.Type');
+            }
+        });
+
+        function showMessage(message, type) {
+            new Noty({ type: type, layout: 'bottomCenter', theme: 'relax', timeout: 5000, progressBar: true, closeWith: ['click', 'button'], modal: false, text: '<li>' + message + '</li>' }).show();
+        }
+    </script>

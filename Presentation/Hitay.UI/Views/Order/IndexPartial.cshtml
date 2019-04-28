@@ -1,0 +1,84 @@
+﻿@using Hitay.UI.Models.Order
+@using Hitay.Common.Enums
+@model OrderViewModel
+
+@Html.HiddenFor(a => a.Id)
+<div class="row col-md-10">
+    <div class="col-md-8">
+        <div class="panel panel-info">
+            <div class="panel-heading">Bekleyen Siparişler</div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Müşteri Adı</th>
+                            <th>Kahve</th>
+                            <th>Krema</th>
+                            <th>Süt</th>
+                            <th>Şeker</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.OrderList.Any())
+                        {
+                            foreach (var order in Model.OrderList)
+                            {
+                                <tr>
+                                    <td>@order.CustomerName</td>
+                                    <td>@order.CoffeeType</td>
+                                    <td>@order.Cream</td>
+                                    <td>@order.Milk</td>
+                                    <td>@order.SugarType</td>
+                                    <th><button type="submit" name="submit" value="Update" class="btn btn-info" onclick="SetId(@order.Id)">Güncelle</button></th>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="panel panel-info">
+            <div class="panel-heading">Hazırlanan</div>
+            <div class="panel-body">
+                @if (Model != null && Model.OrderCount.Any() && Model.OrderCount.Any(a => a.StatusId == (int)OrderStatusEnum.Delivered))
+                {
+                    <h1>@Model.OrderCount.FirstOrDefault(a => a.StatusId == (int)OrderStatusEnum.Delivered).Count</h1>
+                }
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">Bekleyen</div>
+            <div class="panel-body">
+                @if (Model != null && Model.OrderCount.Any() && Model.OrderCount.Any(a => a.StatusId == (int)OrderStatusEnum.Preparing))
+                {
+                    <h1>@Model.OrderCount.FirstOrDefault(a => a.StatusId == (int)OrderStatusEnum.Preparing).Count</h1>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@if (Model.ValidationMessage != null)
+{
+
+}
+
+<script>
+    function SetId(value) {
+        $('#Id').val(value);
+    }
+
+    $( document ).ready(function() {
+        debugger;
+        if ('@Model.ValidationMessage' != null && '@Model.ValidationMessage' !="")
+        {
+            showMessage('@Model.ValidationMessage','@Model.Type');
+        }
+    });
+
+    function showMessage(message, type) {
+        new Noty({ type: type, layout: 'bottomCenter', theme: 'relax', timeout: 5000, progressBar: true, closeWith: ['click', 'button'], modal: false, text: '<li>' + message + '</li>' }).show();
+    }
+</script>

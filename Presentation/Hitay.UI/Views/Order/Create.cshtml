@@ -1,0 +1,16 @@
+﻿@using Hitay.UI.Models.Order
+@using Hitay.Common.Constants
+@model OrderCreateViewModel
+
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+@using (Ajax.BeginForm("Create", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "UpdatePanel", InsertionMode = InsertionMode.Replace, LoadingElementId = "Loading" }))
+{
+    <div id="UpdatePanel">
+        @Html.Partial(PartialViewConstants.CreatePartial, Model)
+    </div>
+}

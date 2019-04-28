@@ -1,0 +1,13 @@
+﻿@using Hitay.UI.Models.Order
+@using Hitay.Common.Constants
+@model OrderViewModel
+@{
+    ViewBag.Title = "Siparişler";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+@using (Ajax.BeginForm("Index", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "UpdatePanel", InsertionMode = InsertionMode.Replace, LoadingElementId = "Loading" }))
+{
+    <div id="UpdatePanel">
+        @Html.Partial(PartialViewConstants.IndexPartial, Model)
+    </div>
+}
